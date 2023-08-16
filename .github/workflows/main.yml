@@ -1,18 +1,49 @@
 name: Create Image
 on: push
+env:
+  docker_username: ${{ github.actor }}
+  docker_password: ${{ secrets.GITHUB_TOKEN }}
+  GIT_COMMIT: ${{ github.sha }}
 jobs:
-  my-job:
+  Clone-down:
     runs-on: ubuntu-latest
     container: gradle:6-jdk11
     steps:
-      - name: Clone Down
+      - name: Clone Repository
         uses: actions/checkout@v3
-      - name: Build
+      - name: Upload Repository
+        uses: actions/upload-artifact@v3
+  Build:
+    runs-on: ubuntu-latest
+    container: gradle:6-jdk11
+    steps:
+      - name: Download Repository
+        uses: actions/download-artifact@v3
+        with:
+          name: code
+          path: . 
+      - name: Build App
         run: chmod +x ci/build-app.sh && ci/build-app.sh
-      - name: Unit test
+      - name: Unit Test
         run: chmod +x ci/unit-test-app.sh && ci/unit-test-app.sh
-      - name: Upload Repo
+      - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with: 
           name: code
           path: .
+          
+  docker-image:
+    runs-on: ubuntu-latest
+    needs: [Build]
+    permissions:
+      packages: write
+    steps:
+      - name: Download code
+        uses: actions/download-artifact@v3
+        with:
+          name: code
+          path: .
+      - name: build docker
+        run: chmod +x ci/build-docker.sh && ci/build-docker.sh
+      - name: push docker
+        run: chmod +x ci/push-docker.sh && ci/push-docker.sh

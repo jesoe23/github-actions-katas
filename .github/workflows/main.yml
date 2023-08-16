@@ -5,9 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     container: gradle:6-jdk11
     steps:
-      - name: Clone-down
+      - name: Clone Down
         uses: actions/checkout@v3
-      - name: Build-app
+      - name: Build App
         run: ci/build-app.sh
-      - name: Unittest
+      - name: Unit test
         run: ci/unit-test-app.sh
+      - name: Upload Repo
+        uses: actions/upload-artifact@v3
+        with: 
+          name: code
+          path: .

@@ -1,4 +1,4 @@
-name: Build
+name: Create Image
 on: push
 jobs:
   my-job:
@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Clone Down
         uses: actions/checkout@v3
-      - name: Build App
+      - name: Build
         run: chmod +x ci/build-app.sh && ci/build-app.sh
       - name: Unit test
         run: chmod +x ci/unit-test-app.sh && ci/unit-test-app.sh

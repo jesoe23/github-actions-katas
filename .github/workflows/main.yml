@@ -19,6 +19,7 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     container: gradle:6-jdk11
+    needs: [Clone-down]
     steps:
       - name: Download Repository
         uses: actions/download-artifact@v3
